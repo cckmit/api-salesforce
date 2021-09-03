@@ -155,7 +155,7 @@ public class SalesforceService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + authentication.getAccessToken());
 
-        List<String> objetos = Arrays.asList(object.split(","));
+        List<String> objetos = Arrays.asList(object.split("#"));
         for(String obj : objetos) {
             System.out.println(obj);
             JSONObject sfParticularidade = new JSONObject(obj.trim());
