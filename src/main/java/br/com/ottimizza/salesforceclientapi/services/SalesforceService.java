@@ -3,6 +3,7 @@ package br.com.ottimizza.salesforceclientapi.services;
 import br.com.ottimizza.salesforceclientapi.constraints.MethodExecution;
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,9 @@ public class SalesforceService {
     
     @Inject
     private SalesForceDao salesForceDao;
+
+    @Value("${chave-acesso-client}")
+    private String CHAVE_FEIGN_CLIENT;
 
     SFOAuth2Authentication authentication = new SFOAuth2Authentication();
 
@@ -132,6 +136,24 @@ public class SalesforceService {
         headers.set("Authorization", "Bearer " + authentication.getAccessToken());
 
         return template.patchForObject(url, new HttpEntity<String>(body, headers), String.class);
+    }
+
+    public String insertMultipleListener(String chave, String objectId, String object) throws Exception {
+        if(!chave.equals(CHAVE_FEIGN_CLIENT))
+            throw new IllegalAccessError("Chave de acesso invalida!");
+
+        authentication = salesforceAuthService.authorize();
+        RestTemplate template = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + authentication.getAccessToken());
+
+        HttpEntity<String> request = new HttpEntity<String>(object, headers);
+
+        String url = this.instanceProperties.buildServiceUrl("/composite/tree/{0}", objectId);
+
+        return template.postForObject(url, request, String.class);
     }
 
 

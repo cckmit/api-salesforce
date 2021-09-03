@@ -83,4 +83,11 @@ public class SalesforceController {
         return ResponseEntity.ok(salesforceService.executeSOQL(soql, methodExecution));
     }
 
+    @PostMapping("/listener/{chave}/composite/tree/{objectId}")
+    public ResponseEntity<?> createMultipleRecordsListener(@PathVariable("chave") String chave,
+                                    @PathVariable("objectId") String objectId, 
+                                    @RequestBody String object) throws Exception {
+        return ResponseEntity.ok(salesforceService.insertMultipleListener(chave, objectId, object));
+    }
+
 }

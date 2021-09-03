@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String[] _allowed = Arrays.asList(new String[] {
-                "/", "/oauth/**", "/auth/**",
+                "/", "/oauth/**", "/auth/**", "/api/v1/salesforce/listener/**"
         }).toArray(new String[] {});
 
          String[] _protected = Arrays.asList(new String[] {
