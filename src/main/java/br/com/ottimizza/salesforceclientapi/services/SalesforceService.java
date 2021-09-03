@@ -147,6 +147,7 @@ public class SalesforceService {
         if(!chave.equals(CHAVE_FEIGN_CLIENT))
             throw new IllegalAccessError("Chave de acesso invalida!");
 
+            System.out.println(object);
         authentication = salesforceAuthService.authorize();
         RestTemplate template = new RestTemplate();
 
@@ -156,6 +157,7 @@ public class SalesforceService {
 
         List<String> objetos = Arrays.asList(object.split(","));
         for(String obj : objetos) {
+            System.out.println(obj);
             JSONObject sfParticularidade = new JSONObject(obj.trim());
             String url = this.instanceProperties.buildServiceUrl(
                 "/sobjects/{0}/{1}/{2}", objectId, "ID_Externo__c", sfParticularidade.optString("ID_Externo__c")
