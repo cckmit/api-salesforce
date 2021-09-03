@@ -1,8 +1,13 @@
 package br.com.ottimizza.salesforceclientapi.services;
 
 import br.com.ottimizza.salesforceclientapi.constraints.MethodExecution;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -149,11 +154,22 @@ public class SalesforceService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + authentication.getAccessToken());
 
-        HttpEntity<String> request = new HttpEntity<String>(object, headers);
+        List<String> objetos = Arrays.asList(object.split(","));
+        for(String obj : objetos) {
+            JSONObject sfParticularidade = new JSONObject(obj.trim());
+            String url = this.instanceProperties.buildServiceUrl(
+                "/sobjects/{0}/{1}/{2}", objectId, "ID_Externo__c", sfParticularidade.optString("ID_Externo__c")
+            );
 
-        String url = this.instanceProperties.buildServiceUrl("/composite/tree/{0}", objectId);
+            defaultPatch(url, object);
+        }
 
-        return template.postForObject(url, request, String.class);
+        return "Regras enviadas com sucesso!";
+        //HttpEntity<String> request = new HttpEntity<String>(object, headers);
+
+        //String url = this.instanceProperties.buildServiceUrl("/composite/tree/{0}", objectId);
+
+        //return template.postForObject(url, request, String.class);
     }
 
 
