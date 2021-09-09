@@ -163,7 +163,7 @@ public class SalesforceService {
                 "/sobjects/{0}/{1}/{2}", objectId, "ID_Externo__c", sfParticularidade.optString("ID_Externo__c")
             );
 
-            defaultPatch(url, object);
+            defaultPatch(url, obj);
         }
 
         return "Regras enviadas com sucesso!";
