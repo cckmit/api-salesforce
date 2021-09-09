@@ -161,6 +161,7 @@ public class SalesforceService {
             JSONObject sfParticularidade = new JSONObject(obj.trim());
             String idExterno = sfParticularidade.optString("ID_Externo__c");
             sfParticularidade.remove("ID_Externo__c");
+            System.out.println(sfParticularidade.toString());
             String url = this.instanceProperties.buildServiceUrl(
                 "/sobjects/{0}/{1}/{2}", objectId, "ID_Externo__c", idExterno
             );
