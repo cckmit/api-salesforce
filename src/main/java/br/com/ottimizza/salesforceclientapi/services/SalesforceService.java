@@ -157,7 +157,6 @@ public class SalesforceService {
 
         List<String> objetos = Arrays.asList(object.split("#"));
         for(String obj : objetos) {
-            System.out.println(obj);
             JSONObject sfParticularidade = new JSONObject(obj.trim());
             String idExterno = sfParticularidade.optString("ID_Externo__c");
             sfParticularidade.remove("ID_Externo__c");
