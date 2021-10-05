@@ -54,3 +54,4 @@ salesforce:
     path: ${KEYSTORE_PATH:classpath:keystore/keystore.jks}
     password: ${KEYSTORE_PASSWORD:ottimizza@123}
 
+chave-acesso-client: ${CHAVE_CLIENT:ottimizza}
