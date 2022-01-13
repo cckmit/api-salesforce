@@ -28,16 +28,22 @@ spring:
                     use_jdbc_metadata_defaults: false
 
 security:
-  oauth2:
-    client:
-      clientId: ${oauth2-config.client-id}
-      clientSecret: ${oauth2-config.client-secret}
-      accessTokenUri: ${oauth2-config.server-url}/oauth/token
-      userAuthorizationUri: ${oauth2-config.server-url}/oauth/authorize
+  jwt:
+    # Chave pública para validação de Token JWT. :)
+    # . . Pode ser um caminho: classpath:public-key.txt
+    public-key: ${JWT_PUBLIC_KEY}
+  
+  
+  #oauth2:
+  #  client:
+  #    clientId: ${oauth2-config.client-id}
+  #    clientSecret: ${oauth2-config.client-secret}
+  #    accessTokenUri: ${oauth2-config.server-url}/oauth/token
+  #    userAuthorizationUri: ${oauth2-config.server-url}/oauth/authorize
 
-    resource:
-      userInfoUri: ${oauth2-config.server-url}/user/info
-      tokenInfoUri: ${oauth2-config.server-url}/oauth/check_token
+  #  resource:
+  #    userInfoUri: ${oauth2-config.server-url}/user/info
+  #    tokenInfoUri: ${oauth2-config.server-url}/oauth/check_token
 
 salesforce:
   instance:
@@ -54,3 +60,4 @@ salesforce:
     path: ${KEYSTORE_PATH:classpath:keystore/keystore.jks}
     password: ${KEYSTORE_PASSWORD:ottimizza@123}
 
+chave-acesso-client: ${CHAVE_CLIENT:ottimizza}

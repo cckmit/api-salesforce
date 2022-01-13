@@ -1,8 +1,14 @@
 package br.com.ottimizza.salesforceclientapi.services;
 
 import br.com.ottimizza.salesforceclientapi.constraints.MethodExecution;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.ottimizza.salesforceclientapi.domain.salesforce.instance.SFInstanceProperties;
 import br.com.ottimizza.salesforceclientapi.domain.salesforce.oauth.SFOAuth2Authentication;
+import br.com.ottimizza.salesforceclientapi.domain.utils.StringUtils;
 import br.com.ottimizza.salesforceclientapi.dao.SalesForceDao;
 
 
@@ -28,6 +35,9 @@ public class SalesforceService {
     @Inject
     private SalesForceDao salesForceDao;
 
+    @Value("${chave-acesso-client}")
+    private String CHAVE_FEIGN_CLIENT;
+
     SFOAuth2Authentication authentication = new SFOAuth2Authentication();
 
     public String fetchBySalesforceId(String objectId, String id) throws Exception {
@@ -39,8 +49,11 @@ public class SalesforceService {
     public String fetchByExternalId(String objectId, String externalIdName, String externalId) throws Exception {
         authentication = salesforceAuthService.authorize();
         String url = this.instanceProperties.buildServiceUrl(
-            "/sobjects/{0}/{1}/{2}", objectId, externalIdName, externalId
+            "/sobjects/{0}/{1}/{2}", objectId, externalIdName, StringUtils.encodeValue(externalId)
         );
+
+        System.out.println(url);
+
         return defaultGet(url);
     }
 
@@ -132,6 +145,38 @@ public class SalesforceService {
         headers.set("Authorization", "Bearer " + authentication.getAccessToken());
 
         return template.patchForObject(url, new HttpEntity<String>(body, headers), String.class);
+    }
+
+    public String insertMultipleListener(String chave, String objectId, String object) throws Exception {
+        if(!chave.equals(CHAVE_FEIGN_CLIENT))
+            throw new IllegalAccessError("Chave de acesso invalida!");
+
+            System.out.println(object);
+        authentication = salesforceAuthService.authorize();
+        RestTemplate template = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + authentication.getAccessToken());
+
+        List<String> objetos = Arrays.asList(object.split("#"));
+        for(String obj : objetos) {
+            JSONObject sfParticularidade = new JSONObject(obj.trim());
+            String idExterno = sfParticularidade.optString("ID_Externo__c");
+            sfParticularidade.remove("ID_Externo__c");
+            String url = this.instanceProperties.buildServiceUrl(
+                "/sobjects/{0}/{1}/{2}", objectId, "ID_Externo__c", idExterno
+            );
+
+            defaultPatch(url, sfParticularidade.toString());
+        }
+
+        return "Regras enviadas com sucesso!";
+        //HttpEntity<String> request = new HttpEntity<String>(object, headers);
+
+        //String url = this.instanceProperties.buildServiceUrl("/composite/tree/{0}", objectId);
+
+        //return template.postForObject(url, request, String.class);
     }
 
 
