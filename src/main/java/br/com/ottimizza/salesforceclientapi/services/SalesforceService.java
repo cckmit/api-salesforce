@@ -124,12 +124,16 @@ public class SalesforceService {
 
         template.setRequestFactory(requestFactory);
 
+        System.out.println("url "+url);
+        System.out.println("authentication "+authentication.getAccessToken());
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + authentication.getAccessToken());
 
         return template.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class).getBody();
     }
+    
 
     private String defaultPatch(String url, String body) {
         RestTemplate template = new RestTemplate();
